@@ -13,21 +13,17 @@ country_codes = {
     'Croatia': 'HRV'
 }
 
-# Calculate number of wins per country
 wins = df['Winner'].value_counts().reset_index()
 wins.columns = ['Country', 'Wins']
 wins['Code'] = wins['Country'].map(country_codes)
 
-# Initialize the Dash app
 app = dash.Dash(__name__)
+server = app.server
 
-# Define the app layout
 app.layout = html.Div([
     html.H1("FIFA World Cup Winners Dashboard", style={'textAlign': 'center'}),
 
-    # First row with two columns
     html.Div([
-        # Left column - Choropleth map
         html.Div([
             dcc.Graph(id='world-map'),
             dcc.RadioItems(
@@ -41,7 +37,6 @@ app.layout = html.Div([
             )
         ], style={'width': '60%', 'display': 'inline-block'}),
 
-        # Right column - Country selector and info
         html.Div([
             html.H3("Country Information"),
             dcc.Dropdown(
@@ -63,13 +58,10 @@ app.layout = html.Div([
         ], style={'width': '35%', 'display': 'inline-block', 'vertical-align': 'top', 'padding-left': '20px'})
     ]),
 
-    # Second row with data table
     html.Div([
         html.H3("Complete World Cup Finals Data"),
         html.Table(
-            # Header
             [html.Tr([html.Th(col) for col in df.columns])] +
-            # Body
             [html.Tr([
                 html.Td(df.iloc[i][col]) for col in df.columns
             ]) for i in range(len(df))],
@@ -78,8 +70,6 @@ app.layout = html.Div([
     ], style={'margin-top': '30px', 'text-align': 'center'})
 ], style={'padding': '20px'})
 
-
-# Define callbacks for interactivity
 @app.callback(
     Output('world-map', 'figure'),
     Input('map-type', 'value')
